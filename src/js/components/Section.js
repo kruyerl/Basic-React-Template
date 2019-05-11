@@ -2,21 +2,25 @@ import React from 'react'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
 
-import TemplateStateFull from './TemplateStateFull'
-
 const StyledPage = styled.section`
-    background-color: palevioletred;
-    height: 100%;
-    width: 100%;
-    max-width: ${props => (props.maxWidth ? props.theme.screens.desktop : `100vw`)};
+    max-width: ${props => {
+        switch (props.max) {
+            case 'desktop':
+                return props.theme.screens.desktop
+            case 'tablet':
+                return props.theme.screens.tablet
+            case 'mobile':
+                return props.theme.screens.mobile
+            default:
+                return '100%'
+        }
+    }};
+    margin: 0 auto;
 `
 
-export default function Section({ maxWidth, children }) {
+export default function Section({ max, children, className }) {
     return (
-        <StyledPage {...maxWidth}>
-            <h1>testing</h1>
-            <TemplateStateFull />
-
+        <StyledPage className={className} max={max}>
             {children}
         </StyledPage>
     )
@@ -24,5 +28,6 @@ export default function Section({ maxWidth, children }) {
 
 Section.propTypes = {
     children: PropTypes.node,
-    maxWidth: PropTypes.bool,
+    max: PropTypes.string,
+    className: PropTypes.string,
 }

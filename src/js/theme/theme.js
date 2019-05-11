@@ -1,26 +1,19 @@
 export const theme = {
     colors: {
         brand: {
-            base: '#0174D9',
-            dar_1: '#0269C3',
-            dar_2: '#0460AF',
-            lig_1: '#328EDF',
-            lig_2: '#1980DB',
+            base: '#001F3F',
+            dark: '#001832',
+            light: '#324A64',
         },
         interactive: {
-            base: '#3EE6B2',
-            dar_1: '#39D0A0',
-            dar_2: '#35BB8F',
-            lig_1: '#50E7B8',
-            lig_2: '#63E9BF',
+            base: '#39CCCC',
+            dark: '#2DA3A3',
+            light: '#5FD5D5',
         },
         layout: {
-            white: '#F5F5F5',
-            black: '#0C2330',
-            grey: {
-                light: '#DEDEDD',
-                dark: '#B4B4B1',
-            },
+            white: '#F9F9F9',
+            black: '#000C18',
+            grey: '#F1F1F1',
         },
         denotive: {
             success: '#88F072',
@@ -30,16 +23,20 @@ export const theme = {
     },
     sizing: '16',
     screens: {
-        mobile: '400px',
+        mobile: '550px',
         tablet: '768px',
         desktop: '1024px',
     },
+    padding: {
+        side: '24px',
+        top: '72px',
+    },
     fonts: {
         headings: {
-            primary: 'RobotoMono-Thin, monospace',
-            secondary: 'RobotoMono-Bold, monospace',
+            primary: `'worksans-bold', sans-serif`,
+            secondary: `'worksans-regular', sans-serif`,
         },
-        body: 'RobotoMono-Regular, monospace ',
+        body: `'worksans-regular', sans-serif`,
     },
     shadows: {
         z1: `box-shadow: 0px 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)`,

@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import styled from 'styled-components'
 import axios from 'axios'
 import PropTypes from 'prop-types'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import Text from '../atoms/Text'
 import Button from '../atoms/Button'
 import Anchor from '../atoms/Anchor'
@@ -49,6 +49,7 @@ const GeneralValidatorLabel = styled(Text)`
 
 function SignIn({ history }) {
     const appState = useSelector(redux => redux)
+    const dispatch = useDispatch()
 
     const [state, setState] = useState({
         form: {

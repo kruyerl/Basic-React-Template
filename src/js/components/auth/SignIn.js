@@ -1,13 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
-import axios from 'axios'
 import PropTypes from 'prop-types'
 import { useSelector, useDispatch } from 'react-redux'
 import Text from '../atoms/Text'
 import Button from '../atoms/Button'
 import Anchor from '../atoms/Anchor'
 import { Input, Label } from '../atoms/Form'
+import { LOADING_UI, SET_ERRORS, CLEAR_ERRORS } from '../../store/types'
+import { loginUser } from '../../store/actions/userActions'
 import { validateSignIn } from '../../utils/validators'
 
 const StyledForm = styled.form`
@@ -56,17 +57,31 @@ function SignIn({ history }) {
             email: '',
             password: '',
         },
-        errors: {},
-        valid: {},
-        loading: false,
-        submitted: false,
     })
     const handleChange = e => {
         setState({ ...state, form: { ...state.form, [e.target.id]: e.target.value } })
     }
+    useEffect(
+        () => () => {
+            dispatch({
+                type: CLEAR_ERRORS,
+            })
+        },
+        []
+    )
     function handleSubmit(e) {
         e.preventDefault()
-        dispatch({ type: 'increase-counter', payload: state.form })
+        dispatch({ type: LOADING_UI })
+        // validate form
+        const validated = validateSignIn(state.form)
+        if (validated.valid) {
+            dispatch(loginUser(state.form, history))
+        } else {
+            dispatch({
+                type: SET_ERRORS,
+                payload: validated.errors,
+            })
+        }
     }
 
     return (
@@ -77,7 +92,7 @@ function SignIn({ history }) {
 
                 <StyledForm noValidate onSubmit={handleSubmit}>
                     <Label htmlFor="email" tag="small">
-                        <StyledLabel tag="small">Email {`${state.loading}`}</StyledLabel>
+                        <StyledLabel tag="small">Email </StyledLabel>
                         <StyledInput
                             id="email"
                             value={state.form.email}
@@ -85,9 +100,9 @@ function SignIn({ history }) {
                             type="email"
                             name="email"
                         />
-                        {state.errors.email && (
+                        {appState.ui.errors.email && (
                             <ValidatorLabel mod="warning" tag="small">
-                                {state.errors.email}
+                                {appState.ui.errors.email}
                             </ValidatorLabel>
                         )}
                     </Label>
@@ -100,18 +115,18 @@ function SignIn({ history }) {
                             type="password"
                             name=""
                         />
-                        {state.errors.password && (
+                        {appState.ui.errors.password && (
                             <ValidatorLabel mod="warning" tag="small">
-                                {state.errors.password}
+                                {appState.ui.errors.password}
                             </ValidatorLabel>
                         )}
                     </Label>
-                    {state.errors.general && (
+                    {appState.ui.errors.general && (
                         <GeneralValidatorLabel mod="warning" tag="small">
-                            {state.errors.general}
+                            {appState.ui.errors.general}
                         </GeneralValidatorLabel>
                     )}
-                    {state.loading && (
+                    {appState.ui.loading && (
                         <GeneralValidatorLabel mod="brand" tag="p">
                             Loading...
                         </GeneralValidatorLabel>

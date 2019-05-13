@@ -1,10 +1,9 @@
 import React from 'react'
 import styled from 'styled-components'
-import PropTypes from 'prop-types'
 import { rgba } from 'polished'
-import { Link, NavLink } from 'react-router-dom'
+import { Link } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 import LogoPic from '../../../assets/img/logo.svg'
-import Anchor from "../atoms/Anchor";
 import SignedInLinks from './SignedInLinks'
 import SignedOutLinks from './SignedOutLinks'
 
@@ -38,16 +37,15 @@ const StyledUl = styled.ul`
 `
 
 export default function Navbar() {
+    const appState = useSelector(redux => redux)
+
     return (
         <Background>
             <StyledNavbar>
                 <Link to="/">
                     <img src={LogoPic} alt="Logo for Intently" />
                 </Link>
-                <StyledUl>
-                    <SignedInLinks />
-                    <SignedOutLinks />
-                </StyledUl>
+                <StyledUl>{appState.user.authenticated ? <SignedInLinks /> : <SignedOutLinks />}</StyledUl>
             </StyledNavbar>
         </Background>
     )

@@ -79,7 +79,7 @@ function Auth(props) {
                 <Close tag="link" to="/">
                     ╳
                 </Close>
-                {search.split('?')[1] === 'sign-in' ? <SignIn {...props} /> : <SignUp />}
+                {search.split('?')[1] === 'sign-in' ? <SignIn {...props} /> : <SignUp {...props} />}
             </ContentBlock>
         </Container>
     )

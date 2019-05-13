@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
-import axios from 'axios'
+import { useSelector, useDispatch } from 'react-redux'
 import Text from '../atoms/Text'
 import Button from '../atoms/Button'
 import Anchor from '../atoms/Anchor'
 import { Input, Label } from '../atoms/Form'
-import LogoPic from '../../../assets/img/logo.svg'
+import { LOADING_UI, SET_ERRORS, CLEAR_ERRORS } from '../../store/types'
+import { signupUser } from '../../store/actions/userActions'
 import { validateSignUp } from '../../utils/validators'
 
 const StyledForm = styled.form`
@@ -45,7 +46,9 @@ const GeneralValidatorLabel = styled(Text)`
     text-align: center;
     margin: -4px 0 0 0;
 `
-function SignUp(props) {
+function SignUp({ history }) {
+    const appState = useSelector(redux => redux)
+    const dispatch = useDispatch()
     const [state, setState] = useState({
         form: {
             email: '',
@@ -53,11 +56,6 @@ function SignUp(props) {
             password: '',
             confirmPassword: '',
         },
-        errors: {
-            password: null,
-        },
-        valid: {},
-        submitted: false,
     })
 
     const handleChange = e => {
@@ -65,39 +63,30 @@ function SignUp(props) {
             ...state,
             form: { ...state.form, [e.target.id]: e.target.value },
         })
-        console.log(state)
     }
     function handleSubmit(e) {
         e.preventDefault()
-        e.preventDefault()
+        dispatch({ type: LOADING_UI })
+        // validate form
         const validated = validateSignUp(state.form)
-        const userData = state.form
-        const url = '/signup'
-        const FBtoken = axios
-            .post(url, userData)
-            .then(res => {
-                localStorage.setItem('FbIdToken', `Bearer ${res.data.token}`)
-                return res
+        if (validated.valid) {
+            dispatch(signupUser(state.form, history))
+        } else {
+            dispatch({
+                type: SET_ERRORS,
+                payload: validated.errors,
             })
-            .then(res => {
-                console.log(res)
-                return res.data
-            })
-            .then(token => {
-                console.log(token)
-
-                // settoken to redux
-            })
-            .catch(err => {
-                if (err.response.data) {
-                    setState({
-                        ...state,
-                        errors: err.response.data,
-                    })
-                }
-                console.log(err.response.data)
-            })
+        }
     }
+
+    useEffect(
+        () => () => {
+            dispatch({
+                type: CLEAR_ERRORS,
+            })
+        },
+        [dispatch]
+    )
 
     return (
         <>
@@ -114,18 +103,18 @@ function SignUp(props) {
                             type="text"
                             name=""
                         />
-                        {state.errors.username && (
+                        {appState.ui.errors.username && (
                             <ValidatorLabel mod="warning" tag="small">
-                                {state.errors.username}
+                                {appState.ui.errors.username}
                             </ValidatorLabel>
                         )}
                     </Label>
                     <Label tag="small">
                         <StyledLabel tag="small">Email</StyledLabel>
                         <StyledInput onChange={handleChange} id="email" value={state.form.email} type="email" name="" />
-                        {state.errors.email && (
+                        {appState.ui.errors.email && (
                             <ValidatorLabel mod="warning" tag="small">
-                                {state.errors.email}
+                                {appState.ui.errors.email}
                             </ValidatorLabel>
                         )}
                     </Label>
@@ -138,9 +127,9 @@ function SignUp(props) {
                             type="password"
                             name="password"
                         />
-                        {state.errors.email && (
+                        {appState.ui.errors.password && (
                             <ValidatorLabel mod="warning" tag="small">
-                                {state.errors.password}
+                                {appState.ui.errors.password}
                             </ValidatorLabel>
                         )}
                     </Label>
@@ -153,15 +142,20 @@ function SignUp(props) {
                             type="password"
                             name="confirmPassword"
                         />
-                        {state.errors.email && (
+                        {appState.ui.errors.confirmPassword && (
                             <ValidatorLabel mod="warning" tag="small">
-                                {state.errors.confirmPassword}
+                                {appState.ui.errors.confirmPassword}
                             </ValidatorLabel>
                         )}
                     </Label>
-                    {state.errors.general && (
+                    {appState.ui.errors.general && (
                         <GeneralValidatorLabel mod="warning" tag="small">
-                            {state.errors.general}
+                            {appState.ui.errors.general}
+                        </GeneralValidatorLabel>
+                    )}
+                    {appState.ui.loading && (
+                        <GeneralValidatorLabel mod="brand" tag="p">
+                            Loading...
                         </GeneralValidatorLabel>
                     )}
                     <StyledCTA>
